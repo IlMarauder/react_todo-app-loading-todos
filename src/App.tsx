@@ -6,10 +6,11 @@ import { TodoFooter } from './Components/Footer';
 import { TodoHeader } from './Components/Header';
 import { TodoMain } from './Components/Main';
 import { ErrorNotifications } from './Components/Errors';
+import { Filter } from './types/Filter';
 
 export const App: React.FC = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
-  const [filter, setFilter] = useState('all');
+  const [filter, setFilter] = useState(Filter.All);
   const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
@@ -21,13 +22,13 @@ export const App: React.FC = () => {
       });
   }, []);
 
-  const filterTodos = (list: Todo[], filterWord: string) => {
+  const filterTodos = (list: Todo[], filterWord: Filter) => {
     switch (filterWord) {
-      case 'all':
+      case Filter.All:
         return list;
-      case 'active':
+      case Filter.Active:
         return list.filter(todo => !todo.completed);
-      case 'completed':
+      case Filter.Completed:
         return list.filter(todo => todo.completed);
       default:
         return list;
@@ -46,9 +47,8 @@ export const App: React.FC = () => {
       <h1 className="todoapp__title">todos</h1>
 
       <div className="todoapp__content">
-        <TodoHeader />
+        <TodoHeader todos={todos} />
         <section className="todoapp__main" data-cy="TodoList">
-          {/* This is a completed todo */}
           {viewedTodos.map(todo => (
             <TodoMain todo={todo} key={todo.id} />
           ))}
@@ -63,8 +63,6 @@ export const App: React.FC = () => {
         )}
       </div>
 
-      {/* DON'T use conditional rendering to hide the notification */}
-      {/* Add the 'hidden' class to hide the message smoothly */}
       <ErrorNotifications error={errorMessage} setError={setErrorMessage} />
     </div>
   );

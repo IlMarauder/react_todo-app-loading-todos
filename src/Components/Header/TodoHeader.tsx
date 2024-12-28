@@ -1,6 +1,12 @@
 import React, { useEffect, useRef } from 'react';
+import cn from 'classnames';
+import { Todo } from '../../types/Todo';
 
-export const TodoHeader: React.FC = () => {
+type Props = {
+  todos: Todo[];
+};
+
+export const TodoHeader: React.FC<Props> = ({ todos }) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -11,14 +17,14 @@ export const TodoHeader: React.FC = () => {
 
   return (
     <header className="todoapp__header">
-      {/* this button should have `active` class only if all todos are completed */}
       <button
         type="button"
-        className="todoapp__toggle-all active"
+        className={cn('todoapp__toggle-all', {
+          active: todos.every(todo => todo.completed),
+        })}
         data-cy="ToggleAllButton"
       />
 
-      {/* Add a todo on form submit */}
       <form>
         <input
           data-cy="NewTodoField"

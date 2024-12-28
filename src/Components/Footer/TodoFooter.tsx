@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import cn from 'classnames';
+import { Filter, filterValues } from '../../types/Filter';
 
 type Props = {
   todosQuantity: number;
-  filter: string;
-  setFilter: (filter: string) => void;
+  filter: Filter;
+  setFilter: Dispatch<SetStateAction<Filter>>;
 };
 
 export const TodoFooter: React.FC<Props> = ({
@@ -19,32 +20,26 @@ export const TodoFooter: React.FC<Props> = ({
       </span>
 
       <nav className="filter" data-cy="Filter">
-        <a
-          href="#/"
-          className={cn('filter__link', { selected: filter === 'all' })}
-          data-cy="FilterLinkAll"
-          onClick={() => setFilter('all')}
-        >
-          All
-        </a>
+        {filterValues.map(currentFilter => {
+          const letters = currentFilter.split('');
+          const [first, ...elseLetters] = letters;
+          const capital = first.toUpperCase();
+          const displayedFilter = [capital, elseLetters.join('')].join('');
 
-        <a
-          href="#/active"
-          className={cn('filter__link', { selected: filter === 'active' })}
-          data-cy="FilterLinkActive"
-          onClick={() => setFilter('active')}
-        >
-          Active
-        </a>
-
-        <a
-          href="#/completed"
-          className={cn('filter__link', { selected: filter === 'completed' })}
-          data-cy="FilterLinkCompleted"
-          onClick={() => setFilter('completed')}
-        >
-          Completed
-        </a>
+          return (
+            <a
+              key={currentFilter}
+              href={`#/${currentFilter}`}
+              className={cn('filter__link', {
+                selected: filter === currentFilter,
+              })}
+              data-cy={`FilterLink${displayedFilter}`}
+              onClick={() => setFilter(currentFilter)}
+            >
+              {displayedFilter}
+            </a>
+          );
+        })}
       </nav>
 
       {/* this button should be disabled if there are no completed todos */}
